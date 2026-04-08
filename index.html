@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1004MAS KOSPI NIGHT SUPREME</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            background-color: #050510;
+            background-image: radial-gradient(circle at 50% 0%, rgba(30, 58, 138, 0.1), transparent 50%);
+            color: #e2e8f0; 
+            font-family: 'Pretendard', sans-serif; 
+            min-height: 100vh;
+        }
+        .mono-num { font-family: 'JetBrains Mono', monospace; }
+        
+        .box-panel { 
+            background: rgba(10, 10, 20, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            border-radius: 8px;
+            box-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.02);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-glow {
+            text-shadow: 0 0 10px rgba(234, 179, 8, 0.5);
+        }
+
+        .text-up { color: #f43f5e; } /* 한국 시장은 빨간색이 상승 */
+        .text-down { color: #3b82f6; } /* 한국 시장은 파란색이 하락 */
+        
+        .bg-up { background-color: rgba(244, 63, 94, 0.1); border-color: rgba(244, 63, 94, 0.3); }
+        .bg-down { background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #f43f5e;
+            width: 70%;
+        }
+
+        /* 펄스 호버 */
+        .card-hover:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* 스크롤바 */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="p-3 lg:p-4 overflow-hidden h-screen flex flex-col">
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-4 border-b border-white/10 pb-3 shrink-0">
+        <div class="flex items-center gap-3">
+            <i class="fas fa-moon text-yellow-500 text-2xl animate-pulse"></i>
+            <h1 class="text-2xl font-black tracking-tighter text-yellow-500 header-glow">
+                1004MAS KOSPI <span class="text-white">NIGHT SUPREME</span>
+            </h1>
+            <span class="ml-2 px-2 py-0.5 text-[10px] font-bold tracking-widest text-emerald-400 border border-emerald-500/30 rounded bg-emerald-500/10">18:00 - 05:00 야간 파생 감시망</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <div id="live-clock" class="text-xl font-black font-mono text-white tracking-widest px-4 py-1.5 rounded box-panel border-white/10">
+                --:--:--
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-grow h-0 pb-2">
+        
+        <!-- Left Panel: Global Macro -->
+        <div class="lg:col-span-3 box-panel flex flex-col overflow-hidden">
+            <div class="p-3 border-b border-white/5 bg-white/[0.01]">
+                <h2 class="text-sm font-bold text-slate-300 flex items-center gap-2">
+                    <i class="fas fa-globe-americas text-blue-400"></i> Global Macro Indices
+                </h2>
+            </div>
+            <div id="macro-list" class="p-4 flex flex-col gap-4 overflow-y-auto">
+                <!-- Data injected by JS -->
+            </div>
+            <div class="mt-auto p-3 text-[11px] text-slate-500 text-center border-t border-white/5">
+                <i class="fas fa-sync fa-spin mr-1"></i> Data sync with US Markets
+            </div>
+        </div>
+
+        <!-- Center Panel: KOSPI Night Futures -->
+        <div class="lg:col-span-6 flex flex-col gap-4 h-full">
+            
+            <!-- Zhuge AI Briefing -->
+            <div class="box-panel flex flex-col shrink-0 border-l-2 border-l-emerald-500">
+                <div class="p-3 border-b border-white/5 bg-emerald-900/10 flex justify-between items-center">
+                    <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                        <i class="fas fa-brain"></i> Zhuge AI Core (내일 시초가 예상 브리핑)
+                    </h2>
+                    <span class="text-[10px] text-emerald-500 border border-emerald-500/30 px-2 rounded">야간 추론 진행중</span>
+                </div>
+                <div class="p-4" id="ai-verdict">
+                    <p class="text-sm text-slate-300 font-medium leading-relaxed">
+                        데이터 수집 대기 중...
+                    </p>
+                </div>
+            </div>
+
+            <!-- Futures Command Card -->
+            <div class="box-panel flex-grow flex flex-col overflow-hidden relative">
+                <!-- Top red line for aesthetics -->
+                <div class="absolute top-0 w-full h-[1px] bg-red-500/50"></div>
+                
+                <div class="p-3 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
+                    <h2 class="text-sm font-bold text-slate-300 flex items-center gap-2">
+                        <i class="fas fa-crosshairs text-red-400"></i> 나이트 스나이퍼 타겟
+                    </h2>
+                    <span class="text-xs text-slate-400">외국인 롤오버 추적망</span>
+                </div>
+                
+                <div class="p-4 overflow-y-auto" id="futures-list">
+                    <!-- Futures item dynamically injected -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel: Intelligence Feed -->
+        <div class="lg:col-span-3 box-panel flex flex-col overflow-hidden">
+            <div class="p-3 border-b border-white/5 bg-white/[0.01]">
+                <h2 class="text-sm font-bold text-yellow-500 flex items-center gap-2">
+                    <i class="fas fa-bolt"></i> Intelligence Feed
+                </h2>
+            </div>
+            <div class="p-3 flex-grow overflow-y-auto" id="alerts-list">
+                <!-- Alerts injected by JS -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function updateClock() {
+            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('en-US', {hour12:false});
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        function renderMacro(data) {
+            if(!data) return;
+            const container = document.getElementById('macro-list');
+            let html = '';
+            for(const key in data) {
+                const item = data[key];
+                const isUp = item.change.includes('+');
+                const colorClass = isUp ? 'text-up' : 'text-down';
+                const bgClass = isUp ? 'bg-up' : 'bg-down';
+                
+                html += `
+                    <div class="border border-white/10 rounded p-3 card-hover transition-colors">
+                        <div class="text-[11px] text-slate-400 mb-1">${item.name}</div>
+                        <div class="flex justify-between items-end">
+                            <div class="text-xl font-bold mono-num text-white">${item.price}</div>
+                            <div class="text-sm font-bold mono-num ${colorClass} bg-black px-1.5 py-0.5 border border-white/5 rounded">
+                                ${item.change}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function renderFutures(dataArr) {
+            if(!dataArr) return;
+            let html = '';
+            dataArr.forEach(t => {
+                const isUp = t.change.includes('+');
+                const colorClass = isUp ? 'text-up' : 'text-down';
+                const icon = isUp ? '<i class="fas fa-caret-up"></i>' : '<i class="fas fa-caret-down"></i>';
+                
+                html += `
+                    <div class="border border-white/5 bg-white/[0.02] rounded-lg p-5">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-black text-white">${t.name}</h3>
+                            <div class="text-3xl font-black mono-num ${colorClass}">${t.price}</div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="bg-black/30 p-2 rounded border border-white/5">
+                                <div class="text-[10px] text-slate-500 mb-1">전일 대비</div>
+                                <div class="font-bold mono-num ${colorClass}">${icon} ${t.change}</div>
+                            </div>
+                            <div class="bg-black/30 p-2 rounded border border-white/5">
+                                <div class="text-[10px] text-slate-500 mb-1">야간 거래량</div>
+                                <div class="font-bold mono-num text-slate-200">${t.volume}</div>
+                            </div>
+                            <div class="bg-black/30 p-2 rounded border-l-2 ${t.foreign_net_buy.includes('+') ? 'border-l-red-500' : 'border-l-blue-500'}">
+                                <div class="text-[10px] text-slate-500 mb-1">외국인 순매수</div>
+                                <div class="font-bold mono-num text-white">${t.foreign_net_buy}</div>
+                            </div>
+                            <div class="bg-black/30 p-2 rounded border-l-2 border-l-yellow-500">
+                                <div class="text-[10px] text-slate-500 mb-1">Basis (콘탱고 여부)</div>
+                                <div class="font-bold mono-num text-yellow-400">${t.basis}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('futures-list').innerHTML = html;
+        }
+
+        function renderAlerts(alerts) {
+            if(!alerts) return;
+            const html = alerts.map(a => `
+                <div class="text-[12px] text-slate-300 mb-3 border-b border-white/5 pb-2 border-l-2 border-l-yellow-500 pl-2">
+                    ${a}
+                </div>
+            `).join('');
+            document.getElementById('alerts-list').innerHTML = html;
+        }
+
+        async function fetchRadarData() {
+            try {
+                const res = await fetch('http://localhost:8090/api/market_data');
+                const data = await res.json();
+                
+                if(data.macro) renderMacro(data.macro);
+                if(data.futures) renderFutures(data.futures);
+                if(data.alerts) renderAlerts(data.alerts);
+                
+                if(data.verdict) {
+                    let vHtml = data.verdict;
+                    vHtml = vHtml.replace(/<thinking>/g, `
+                        <div class="bg-black/30 rounded p-3 mb-3 border border-emerald-500/20 text-emerald-200/70 text-[12px] font-mono whitespace-pre-wrap">
+                            <span class="text-emerald-500 font-bold"># Thought_Process_</span>\n
+                    `).replace(/<\/thinking>/g, '</div>');
+                    document.getElementById('ai-verdict').innerHTML = `<div class="text-[14px] text-slate-200">${vHtml}</div>`;
+                }
+            } catch (err) {
+                console.error("Backend fetch error:", err);
+            }
+        }
+
+        setInterval(fetchRadarData, 5000);
+        fetchRadarData();
+    </script>
+</body>
+</html>
