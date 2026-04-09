@@ -227,7 +227,7 @@
 
         async function fetchRadarData() {
             try {
-                const res = await fetch('https://academics-kennedy-switch-believe.trycloudflare.com/api/market_data');
+                const res = await fetch('http://localhost:8090/api/market_data');
                 const data = await res.json();
                 
                 if(data.macro) renderMacro(data.macro);
